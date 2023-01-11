@@ -90,7 +90,6 @@ describe('filterByType', () => {
   it('should return two specific pokemons', () => {
     const searchResult = filterByType(data, 'poison')
     expect(searchResult.length).toEqual(2)
-    console.log(searchResult)
     expect(searchResult[0].name).toEqual('bulbasaur');
     expect(searchResult[1].name).toEqual('arbok');
   });

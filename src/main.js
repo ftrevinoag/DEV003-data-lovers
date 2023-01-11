@@ -2,11 +2,10 @@ import { filterByGeneration, search, order, dpsCalculate, epsCalculate } from '.
 import data from './data/pokemon/pokemon.js';
 
 // Ser más específica con lo que se realiza y cambiar el nombre de la función //
-// Preguntar a coaches si puedo tener mis funciones dentro de diferentes carpetas para un código más ordenado //
-// Agregar comentarios //
+// Agregar comentarios (no necesariamente tiene que ser por cada linea) // explicar la funcion del html que esta generando
 
 
-
+// Esta función sirve para crear las tarjetas de Pokemon y lleva los botones que contienen dentro modals
 const pokemonCardsHtml = (allPokemons) => {
   let dataPokemon = '';
   allPokemons.forEach((eachPokemon) => {
@@ -25,6 +24,7 @@ const pokemonCardsHtml = (allPokemons) => {
   return dataPokemon;
 };
 
+// Esta función contiene el cuerpo del modal que está dentro del botón 'Features'
 const modalFeatureslHtml = (pokemon) => {
   return `
   <p id="modal_close">x</p>
@@ -67,6 +67,7 @@ const modalFeatureslHtml = (pokemon) => {
   `
 }
 
+// Esta función contiene el cuerpo del modal que está dentro del botón 'Features'
 const modalAttacklHtml = (pokemon) => {
   return `
   <p id="modal_close">x</p>
@@ -147,48 +148,41 @@ const modalAttacklHtml = (pokemon) => {
 
 }
 
-// Ser más específica con la función GENERATION // updateGenerationList
-// Obteniendo todos los pokemones y separando por generación
-const updateGenerationList = (pokemonList, sectionContent) => {
-  sectionContent.innerHTML = '';
-  // Dejar de mostrar el contenedor del filtrado
-  //sectionContent.classList.remove('show');
-  // Creando secc Kanto
-  //sectionContent.appendChild(generation('I', 'Kanto'));
-  const cardsContainer = document.createElement('div');
-  cardsContainer.className = 'cards-distribution';
-  // Creando e insertando cards de pokemones
-  cardsContainer.innerHTML += pokemonCardsHtml(pokemonList);
-  sectionContent.appendChild(cardsContainer);
-
-
+// Esta función crea el evento para el botón que se realizará a través de un click
+const setupFeaturesBtnsEvents = (pokemonList) => {
   const buttonFeaturesArray = Array.from(document.getElementsByClassName("button-features"))
-  const buttonAttackArray = Array.from(document.getElementsByClassName("button-attacks"))
   buttonFeaturesArray.forEach(function (button) {
     button.addEventListener('click', function (event) {
-      const pokemon = data.pokemon.find(function (pokemon) {
+      const pokemon = pokemonList.find(function (pokemon) {
         return pokemon.name === event.target.name
       })
-
+      // Esta función crea el modal con el markup creado y también hacemos que el modal aparezca y se
+      // cierre a través de un click
       const modal = document.getElementById('modal')
       modal.style.display = 'block'
-      modal.innerHTML = modalFeatureslHtml(pokemon) 
+      modal.innerHTML = modalFeatureslHtml(pokemon)
       document.getElementById('modal_close').addEventListener('click', function () {
         document.getElementById('modal').style.display = 'none'
       })
     })
   })
+}
 
+
+// Esta función crea el evento para el botón que se realizará a través de un click
+const setupAttackBtnsEvents = (pokemonList) => {
+  const buttonAttackArray = Array.from(document.getElementsByClassName("button-attacks"))
   buttonAttackArray.forEach(function (button) {
     button.addEventListener('click', function (event) {
-      const pokemon = data.pokemon.find(function (pokemon) {
+      const pokemon = pokemonList.find(function (pokemon) {
         return pokemon.name === event.target.name
       })
 
-
+      // Esta función crea el modal con el markup creado y también hacemos que el modal aparezca y se
+      // cierre a través de un click
       const modal = document.getElementById('modal')
       modal.style.display = 'block'
-      modal.innerHTML =  modalAttacklHtml(pokemon) 
+      modal.innerHTML = modalAttacklHtml(pokemon)
       document.getElementById('modal_close').addEventListener('click', function () {
         document.getElementById('modal').style.display = 'none'
       })
@@ -196,37 +190,57 @@ const updateGenerationList = (pokemonList, sectionContent) => {
   })
 };
 
-// El evento que llama a la función que inserta todos los pokemones al iniciar la página
+
+
+// Esta función inserta las tarjetas y botones en section-content
+const updateGenerationList = (pokemonList, sectionContent) => {
+  sectionContent.innerHTML = '';
+  const cardsContainer = document.createElement('div');
+  cardsContainer.className = 'cards-distribution';
+  // Creando e insertando cards de pokemones
+  cardsContainer.innerHTML += pokemonCardsHtml(pokemonList);
+  sectionContent.appendChild(cardsContainer);
+  setupFeaturesBtnsEvents(pokemonList)
+  setupAttackBtnsEvents(pokemonList)
+
+};
+
+// Se insertó dentro de éste window todas las funciones que quiero que estén presentes
+// para cuando se termine de cargar el HTML
 window.addEventListener('load', () => {
   const sectionContent = document.querySelector('.content');
   const kantoPokemons = filterByGeneration(data.pokemon, 'kanto')
   updateGenerationList(kantoPokemons, sectionContent);
-  // Guardando input para buscar
   const searchInput = document.querySelector('#filter-search');
   setupSearchInputEvent(searchInput, sectionContent, data.pokemon)
   const selectionInput = document.querySelector('#selection');
   setupOrderListEvent(selectionInput, sectionContent, data.pokemon)
+  const filter = document.getElementById('filter-by-type');
+  setupFilterEvent(filter, sectionContent, data.pokemon)
+});
 
 
-  const filter = document.getElementById('filter-by-type')
+// La función que sirve para buscar pokemones por tipo y que hará que la interfaz del usuario
+// se actualice sólo con los pokemones del tipo seleccionado
+const setupFilterEvent = (filter, sectionContent, pokemonList) => {
   filter.addEventListener('change', function (event) {
-    const selectedTypePokemons = data.pokemon.filter(function (pokemon) {
+    const selectedTypePokemons = pokemonList.filter(function (pokemon) {
       return pokemon.type.includes(event.target.value.toLowerCase())
     })
     if (event.target.value === 'Default') {
-      updateGenerationList(kantoPokemons, sectionContent)
+      updateGenerationList(pokemonList, sectionContent)
     } else {
       updateGenerationList(selectedTypePokemons, sectionContent)
     }
   })
-});
+}
 
+// La función que busca pokemones a través del input que el usuario ingrese en la interfaz
+// Se modificará la interfaz del usuario de acuerdo a las lentras ingresadas
 const setupSearchInputEvent = (searchInput, sectionContent, pokemonSearchList) => {
-  // Evento del input que ejecuta la funcion search
   searchInput.addEventListener('input', () => {
     const inputText = searchInput.value.toLowerCase();
     if (inputText.length > 0) {
-      // Buscando pokemones
       const result = search(pokemonSearchList, inputText);
       result.length > 0 ? updateGenerationList(result, sectionContent) : setupNoResultsList(sectionContent)
     } else {
@@ -235,6 +249,8 @@ const setupSearchInputEvent = (searchInput, sectionContent, pokemonSearchList) =
   });
 }
 
+
+// La función que sirve para cuando el input del usuario no arroje ningún resultado 
 const setupNoResultsList = (sectionContent) => {
   sectionContent.innerHTML = '';
   const cardsContainer = document.createElement('div');
@@ -243,6 +259,7 @@ const setupNoResultsList = (sectionContent) => {
   sectionContent.appendChild(cardsContainer);
 }
 
+// La función que ordenará a los pokemones de acuerdo al input del usuario y actualizará la interfaz 
 const setupOrderListEvent = (selectionInput, sectionContent, pokemonList) => {
   selectionInput.addEventListener('change', () => {
     const chosenOrder = selectionInput.value;
