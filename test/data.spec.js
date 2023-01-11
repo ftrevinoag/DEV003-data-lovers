@@ -2,6 +2,8 @@ import { search, order, filterByGeneration, filterByType, dpsCalculate,  epsCalc
 import { data } from './testing-data'
 import { dataCalculate } from './testing-data'
 
+
+// Filter by generation
 describe('filterByGeneration', () => {
   it('is a function', () => {
     expect(typeof filterByGeneration).toBe('function');
@@ -28,6 +30,8 @@ describe('filterByGeneration', () => {
   })
 })
 
+
+//Search
 describe('search', () => {
   it('is a function', () => {
     expect(typeof search).toBe('function');
