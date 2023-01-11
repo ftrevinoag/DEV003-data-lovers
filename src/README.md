@@ -16,4 +16,4 @@ En la primera vista:
 Este proyecto de una sola vista contiene todas las interacciones para que el usuario tenga una experiencia ordenada, informativa y visual. El usuario puede ver cada uno de los Pokemones en tarjetas que a su vez se componen con dos botones. El usuario podrá conocer los Features y Attacks de cada respectivo Pokemon que desee elegir a través de los botones que se encuentran en cada tarjeta.  El usuario puede ordenar de forma alfabética, puede elegir filtrar a través del tipo como también ordenar la lista del tipo elegido y por último, el usuario también podrá disfrutar buscar su Pokemon favorito de la región Kanto.
 
 #AUTHOR
-María Fernanda Treviño Aguilarnb
+María Fernanda Treviño Aguilar
